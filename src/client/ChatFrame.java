@@ -16,9 +16,10 @@ import javax.swing.JToolBar;
 public class ChatFrame extends JFrame {
 
 	private ChatPanel chatPanel;
-
-	public ChatFrame() {
+	private Client client;
+	public ChatFrame(Client client) {
 		super("I Chat!");
+		this.client = client;
 		setLayout(new BorderLayout());
 		chatPanel = new ChatPanel();
 		add(chatPanel, BorderLayout.CENTER);
@@ -31,7 +32,7 @@ public class ChatFrame extends JFrame {
 
 		private JToolBar toolbar;
 		private JButton newChat;
-
+		
 		public ChatPanel() {
 
 			super();
@@ -61,7 +62,7 @@ public class ChatFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String username = JOptionPane.showInputDialog(null);
-					
+					client.getSocket()
 				}
 			});
 		}

@@ -3,15 +3,17 @@ package server;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import client.Client;
+import com.User;
 
 public class ClientsDatabase {
 	
 	private ArrayList<Handler> handlers;
+	private HashMap<User, Handler> userAndHandlers;
 	private static ClientsDatabase instance = null;
 
 	private ClientsDatabase() {
 		handlers = new ArrayList<>();
+		userAndHandlers = new HashMap<>();
 		instance = this;
 	}
 	
@@ -21,8 +23,9 @@ public class ClientsDatabase {
 		return instance;
 	}
 	
-	public void add(Handler handler){
+	public void add(Handler handler,User username){
 		handlers.add(handler);
+		userAndHandlers.put(username, handler);
 	}
 	
 	public void refresh(){

@@ -25,10 +25,11 @@ public class Client implements Serializable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		new LoginFrame(this);
+		new ChatFrame(this);
 	}
 	public static void main(String[] args) {		
 		new Client();
+		
 	}
 	
 	public void setUser(User user){

@@ -22,6 +22,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import com.Message;
+import com.User;
 
 public class LoginFrame extends JFrame {
 
@@ -128,6 +129,18 @@ public class LoginFrame extends JFrame {
 					}
 					if(message.getMessage().equals("SUCCESS")){
 						JOptionPane.showMessageDialog(LoginFrame.this, "Login was successful!");
+						
+						try {
+							InputStream in = client.getSocket().getInputStream();
+							ObjectInputStream input = new ObjectInputStream(in);
+							client.setUser((User) input.readObject());
+						} catch (ClassNotFoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
 					else{
 						JOptionPane.showMessageDialog(LoginFrame.this, "Login failed!");

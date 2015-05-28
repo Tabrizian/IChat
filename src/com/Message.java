@@ -12,6 +12,7 @@ public class Message implements Serializable{
 	public static final int DELIVERED = 1;
 	public static final int LOGIN = 2;
 	public static final int SIGNUP = 3;
+	public static final int AUTH = 4;
 	public static final String SERVER = "SERVER";
 	private int verb;
 	private String source_ID;
