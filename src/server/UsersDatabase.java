@@ -54,7 +54,7 @@ public class UsersDatabase {
 
 	}
 
-	public boolean checkValidity(String username, String password) {
+	public boolean isValid(String username, String password) {
 		if (userAndPass.containsKey(username)
 				&& userAndPass.get(username).equals(password)) {
 			return true;

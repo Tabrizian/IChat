@@ -6,6 +6,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,6 +18,8 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import com.Message;
+
 public class LoginFrame extends JFrame {
 
 	private LoginPanel panel;
@@ -23,21 +27,24 @@ public class LoginFrame extends JFrame {
 	private static final Font defaultFont = new Font("Comic Sans MS",
 			Font.BOLD, 15);
 	private static final Font ichatFont = new Font("Capture it", Font.BOLD, 30);
+	private Client client;
 
-	public LoginFrame() {
+	public LoginFrame(Client client) {
 		super("Login");
-		try {
-			UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
-		} catch (ClassNotFoundException | InstantiationException
-				| IllegalAccessException | UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		this.client = client;
+//
+//		try {
+//			UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
+//		} catch (ClassNotFoundException | InstantiationException
+//				| IllegalAccessException | UnsupportedLookAndFeelException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		setLayout(new BorderLayout());
 		panel = new LoginPanel();
 		add(panel, BorderLayout.CENTER);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setUndecorated(true);
 		setVisible(true);
 		setSize(300, 300);
 	}
@@ -61,7 +68,7 @@ public class LoginFrame extends JFrame {
 
 			username = new JTextField(15);
 			password = new JPasswordField(15);
-			
+
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
 
 			ichat = new JLabel("I Chat!");
@@ -83,11 +90,11 @@ public class LoginFrame extends JFrame {
 			gc.gridx = 0;
 			gc.gridy = 1;
 			add(username, gc);
-			
+
 			gc.gridx = 0;
 			gc.gridy = 2;
 			add(password, gc);
-			
+
 			gc.gridx = 0;
 			gc.gridy = 3;
 			gc.ipadx = 100 - (int) login.getPreferredSize().getWidth();
@@ -97,6 +104,27 @@ public class LoginFrame extends JFrame {
 			gc.gridy = 4;
 			gc.ipadx = 100 - (int) signup.getPreferredSize().getWidth();
 			add(signup, gc);
+
+			login.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent e) {
+
+					new Message(Message.LOGIN, "", Message.SERVER, username
+							+ "," + password).send(client.getSocket());
+
+				}
+			});
+			
+			signup.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					
+					new SignupFrame(client);
+					
+				}
+			});
 		}
 
 		private void makeStyledButton(JButton login) {
