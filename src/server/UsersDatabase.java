@@ -12,6 +12,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.User;
+
 public class UsersDatabase {
 
 	private HashMap<String, String> userAndPass;
@@ -40,6 +42,7 @@ public class UsersDatabase {
 			if (!users.contains(user)) {
 				userAndPass.put(user.getUsername(), user.getPassword());
 				users.add(user);
+				writeUser(user);
 				return true;
 			} else {
 				return false;

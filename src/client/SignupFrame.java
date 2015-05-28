@@ -85,7 +85,7 @@ public class SignupFrame extends JFrame {
 					new Message(Message.SIGNUP, "", Message.SERVER, username
 							.getText()
 							+ ","
-							+ password.getPassword().toString()
+							+ password.getText()
 							+ ","
 							+ firstname.getText() + "," + lastname.getText())
 							.send(client.getSocket());

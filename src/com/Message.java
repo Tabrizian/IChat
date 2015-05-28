@@ -1,12 +1,12 @@
 package com;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 
-public class Message {
+public class Message implements Serializable{
 
 	public static final int SEND = 0;
 	public static final int DELIVERED = 1;
@@ -29,8 +29,11 @@ public class Message {
 	
 	public void send(Socket socket){
 		try {
-			ObjectOutputStream obj = new ObjectOutputStream(socket.getOutputStream());
+			OutputStream out = socket.getOutputStream();
+			ObjectOutputStream obj = new ObjectOutputStream(out);
 			obj.writeObject(this);
+			out.flush();
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

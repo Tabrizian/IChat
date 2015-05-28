@@ -8,15 +8,18 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import com.Message;
 
@@ -26,39 +29,35 @@ public class LoginFrame extends JFrame {
 	private static final Color blue = new Color(43, 129, 254);
 	private static final Font defaultFont = new Font("Comic Sans MS",
 			Font.BOLD, 15);
-	private static final Font ichatFont = new Font("Capture it", Font.BOLD, 30);
+	private static final Font ichatFont = new Font("Kristen ITC", Font.BOLD, 40);
 	private Client client;
 
 	public LoginFrame(Client client) {
 		super("Login");
-		
+
+		setUndecorated(true);
 		this.client = client;
-//
-//		try {
-//			UIManager.setLookAndFeel("com.jtattoo.plaf.acryl.AcrylLookAndFeel");
-//		} catch (ClassNotFoundException | InstantiationException
-//				| IllegalAccessException | UnsupportedLookAndFeelException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+
 		setLayout(new BorderLayout());
 		panel = new LoginPanel();
 		add(panel, BorderLayout.CENTER);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
 		setSize(300, 300);
+		setLocation(200, 200);
 	}
 
 	private class LoginPanel extends JPanel {
 		private JButton login;
 		private JButton signup;
 		private JTextField username;
-		private JTextField password;
+		private JPasswordField password;
 		private JLabel ichat;
 
 		public LoginPanel() {
 			setLayout(new GridBagLayout());
-
+			setBorder(BorderFactory.createLineBorder(Color.GRAY, 5));
+			setBackground(Color.WHITE);
 			GridBagConstraints gc = new GridBagConstraints();
 			gc.weightx = 1;
 			gc.weighty = 1;
@@ -69,11 +68,13 @@ public class LoginFrame extends JFrame {
 			username = new JTextField(15);
 			password = new JPasswordField(15);
 
+			username.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+			password.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
 
-			ichat = new JLabel("I Chat!");
+			ichat = new JLabel("iChat!");
 			ichat.setFont(ichatFont);
-			ichat.setForeground(Color.RED);
+			ichat.setForeground(blue);
 
 			makeStyledButton(login);
 			makeStyledButton(signup);
@@ -111,18 +112,37 @@ public class LoginFrame extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 
 					new Message(Message.LOGIN, "", Message.SERVER, username
-							+ "," + password).send(client.getSocket());
+							.getText() + "," + password.getText()).send(client
+							.getSocket());
+					Message message = null;
+					try {
+						InputStream in = client.getSocket().getInputStream();
+						ObjectInputStream input = new ObjectInputStream(in);
+						message = (Message) input.readObject();
+					} catch (ClassNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					if(message.getMessage().equals("SUCCESS")){
+						JOptionPane.showMessageDialog(LoginFrame.this, "Login was successful!");
+					}
+					else{
+						JOptionPane.showMessageDialog(LoginFrame.this, "Login failed!");
+					}
 
 				}
 			});
-			
+
 			signup.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
+
 					new SignupFrame(client);
-					
+
 				}
 			});
 		}

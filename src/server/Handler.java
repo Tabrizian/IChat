@@ -3,10 +3,10 @@ package server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import com.Message;
+import com.User;
 
 public class Handler implements Runnable {
 
@@ -24,21 +24,26 @@ public class Handler implements Runnable {
 			InputStream in = socket.getInputStream();
 			ObjectInputStream input = new ObjectInputStream(in);
 			Message message = (Message) input.readObject();
+			System.out.println("Hello");
 			String[] tokens;
 			switch (message.getVerb()) {
 			case Message.LOGIN: {
-				tokens = message.getMessage().split(" ");
+				tokens = message.getMessage().split(",");
 				String username = tokens[0];
 				String password = tokens[1];
 				if (UsersDatabase.getUsersDataBase()
 						.isValid(username, password)) {
-
+					new Message(Message.LOGIN, Message.SERVER, "CLIENT",
+							"SUCCESS").send(socket);
+				} else {
+					new Message(Message.LOGIN, Message.SERVER, "CLIENT",
+							"FAILED").send(socket);
 				}
 			}
 				break;
 
 			case Message.SIGNUP: {
-				tokens = message.getMessage().split(" ");
+				tokens = message.getMessage().split(",");
 				String username = tokens[0];
 				String password = tokens[1];
 				String firstName = tokens[2];
