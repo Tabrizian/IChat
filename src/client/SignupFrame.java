@@ -7,9 +7,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -44,6 +47,7 @@ public class SignupFrame extends JFrame {
 		private JTextField firstname;
 		private JTextField lastname;
 		private JButton signup;
+		private JLabel check;
 
 		public SignupPanel() {
 			super();
@@ -52,6 +56,7 @@ public class SignupFrame extends JFrame {
 			firstname = new JTextField(15);
 			lastname = new JTextField(15);
 			signup = new JButton("Sign up");
+			check = new JLabel();
 
 			makeStyledButton(signup);
 
@@ -77,6 +82,12 @@ public class SignupFrame extends JFrame {
 			gc.weighty = 0.5;
 			add(signup, gc);
 
+			gc.weighty = 1;
+			gc.weightx = 0.2;
+			gc.gridx = 1;
+			gc.gridy = 0;
+			add(check, gc);
+
 			signup.addActionListener(new ActionListener() {
 
 				@Override
@@ -89,10 +100,50 @@ public class SignupFrame extends JFrame {
 							+ ","
 							+ firstname.getText() + "," + lastname.getText())
 							.send(client.getSocket());
-					;
 
 				}
 			});
+
+			username.addKeyListener(new KeyListener() {
+
+				@Override
+				public void keyTyped(KeyEvent e) {
+					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
+							username.getText()).send(client.getSocket());
+					if (Message.recieveMessage(client.getSocket()).getMessage()
+							.equals("true")) {
+						check.setText("Check!");
+					} else {
+						check.setText("X");
+					}
+				}
+
+				@Override
+				public void keyReleased(KeyEvent e) {
+					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
+							username.getText()).send(client.getSocket());
+					if (Message.recieveMessage(client.getSocket()).getMessage()
+							.equals("true")) {
+						check.setText("Check!");
+					} else {
+						check.setText("X");
+					}
+
+				}
+
+				@Override
+				public void keyPressed(KeyEvent e) {
+					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
+							username.getText()).send(client.getSocket());
+					if (Message.recieveMessage(client.getSocket()).getMessage()
+							.equals("true")) {
+						check.setText("Check!");
+					} else {
+						check.setText("X");
+					}
+				}
+			});
+
 		}
 
 		private void makeStyledButton(JButton login) {

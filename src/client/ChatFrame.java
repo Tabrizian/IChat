@@ -5,6 +5,10 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -62,7 +66,21 @@ public class ChatFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String username = JOptionPane.showInputDialog(null);
-					client.getSocket()
+					try {
+						PrintWriter pw = new PrintWriter(client.getSocket().getOutputStream());
+						pw.write(username);
+						BufferedReader br = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+//					String str = br.readLine();
+//					if(str.equals("true")){
+//						
+//					}
+//					else{
+//						
+//					}
 				}
 			});
 		}

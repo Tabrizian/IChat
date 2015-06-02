@@ -127,13 +127,19 @@ public class LoginFrame extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					if(message.getMessage().equals("SUCCESS")){
-						JOptionPane.showMessageDialog(LoginFrame.this, "Login was successful!");
-						
+					if (message.getMessage().equals("SUCCESS")) {
+						JOptionPane.showMessageDialog(LoginFrame.this,
+								"Login was successful!");
+
 						try {
-							InputStream in = client.getSocket().getInputStream();
+							InputStream in = client.getSocket()
+									.getInputStream();
 							ObjectInputStream input = new ObjectInputStream(in);
-							client.setUser((User) input.readObject());
+							Message ms = (Message) input.readObject();
+							String[] tokens = ms.getMessage().split(",");
+							User user = new User(tokens[0], tokens[1],
+									tokens[2], tokens[3]);
+							client.setUser(user);
 						} catch (ClassNotFoundException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -141,9 +147,9 @@ public class LoginFrame extends JFrame {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-					}
-					else{
-						JOptionPane.showMessageDialog(LoginFrame.this, "Login failed!");
+					} else {
+						JOptionPane.showMessageDialog(LoginFrame.this,
+								"Login failed!");
 					}
 
 				}

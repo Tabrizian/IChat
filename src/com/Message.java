@@ -1,6 +1,7 @@
 package com;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -13,7 +14,10 @@ public class Message implements Serializable{
 	public static final int LOGIN = 2;
 	public static final int SIGNUP = 3;
 	public static final int AUTH = 4;
+	public static final int USERNAME = 5;
 	public static final String SERVER = "SERVER";
+	public static final String CLIENT = "CLIENT";
+	
 	private int verb;
 	private String source_ID;
 	private String dest_ID;
@@ -58,6 +62,21 @@ public class Message implements Serializable{
 	}
 
 	public String getMessage() {
+		return message;
+	}
+	
+	public static Message recieveMessage(Socket socket){
+		Message message = null;
+		try {
+			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+			message = (Message) in.readObject();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return message;
 	}
 
