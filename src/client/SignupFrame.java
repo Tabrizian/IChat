@@ -13,6 +13,7 @@ import java.awt.event.KeyListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
@@ -100,7 +101,14 @@ public class SignupFrame extends JFrame {
 							+ ","
 							+ firstname.getText() + "," + lastname.getText())
 							.send(client.getSocket());
-
+					
+					Message message = Message.recieveMessage(client.getSocket());
+					if(message.getMessage().equals("true")){
+						JOptionPane.showMessageDialog(SignupFrame.this, "Signup was successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+						SignupFrame.this.dispose();
+					}else{
+						JOptionPane.showMessageDialog(SignupFrame.this, "Username already exist!", "Failure", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 

@@ -34,6 +34,9 @@ public class ClientsDatabase {
 				handlers.remove(handler);
 		}
 	}
+	public Handler getHandler(User user){
+		return userAndHandlers.get(user);
+	}
 	
 	
 }

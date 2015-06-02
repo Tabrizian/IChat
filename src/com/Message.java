@@ -15,6 +15,7 @@ public class Message implements Serializable{
 	public static final int SIGNUP = 3;
 	public static final int AUTH = 4;
 	public static final int USERNAME = 5;
+	public static final int ADDTOCHAT = 6;
 	public static final String SERVER = "SERVER";
 	public static final String CLIENT = "CLIENT";
 	

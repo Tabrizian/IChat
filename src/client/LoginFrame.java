@@ -130,7 +130,6 @@ public class LoginFrame extends JFrame {
 					if (message.getMessage().equals("SUCCESS")) {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login was successful!");
-
 						try {
 							InputStream in = client.getSocket()
 									.getInputStream();
@@ -147,6 +146,9 @@ public class LoginFrame extends JFrame {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						new ChatFrame(client);
+						LoginFrame.this.dispose();
+						
 					} else {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login failed!");

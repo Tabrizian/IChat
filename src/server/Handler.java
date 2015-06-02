@@ -39,6 +39,10 @@ public class Handler implements Runnable {
 			switch (message.getVerb()) {
 
 			case Message.SEND: {
+				User usr = UsersDatabase.getUsersDataBase().getUser(
+						message.getDest_ID());
+				message.send(ClientsDatabase.getClientsDatabase()
+						.getHandler(usr).getSocket());
 				break;
 			}
 			case Message.DELIVERED: {
@@ -59,12 +63,13 @@ public class Handler implements Runnable {
 							username);
 					new Message(Message.USERNAME, Message.SERVER,
 							Message.CLIENT, user.toString()).send(socket);
+					ClientsDatabase.getClientsDatabase().add(this, user);
 
 				} else {
 					new Message(Message.LOGIN, Message.SERVER, Message.CLIENT,
 							"FAILED").send(socket);
 				}
-
+				
 				break;
 			}
 			case Message.SIGNUP: {
@@ -79,13 +84,13 @@ public class Handler implements Runnable {
 						.addUser(
 								new User(firstName, lastName, username,
 										password), true);
-				// if (!added) {
-				// new Message(Message.AUTH, Message.SERVER, Message.CLIENT,
-				// "true").send(socket);
-				// }else{
-				// new Message(Message.AUTH, Message.SERVER, Message.CLIENT,
-				// "false").send(socket);
-				// }
+				if (!added) {
+					new Message(Message.AUTH, Message.SERVER, Message.CLIENT,
+							"false").send(socket);
+				} else {
+					new Message(Message.AUTH, Message.SERVER, Message.CLIENT,
+							"true").send(socket);
+				}
 				break;
 			}
 			case Message.AUTH: {
@@ -101,6 +106,11 @@ public class Handler implements Runnable {
 				break;
 			}
 			case Message.USERNAME: {
+				new Message(Message.USERNAME, Message.SERVER, Message.CLIENT,
+						UsersDatabase.getUsersDataBase()
+								.getUser(message.getMessage()).toString())
+						.send(socket);
+				;
 				break;
 			}
 
@@ -111,6 +121,10 @@ public class Handler implements Runnable {
 
 	public boolean isRunning() {
 		return !socket.isClosed();
+	}
+
+	public Socket getSocket() {
+		return socket;
 	}
 
 }

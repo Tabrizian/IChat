@@ -5,10 +5,6 @@ import java.awt.Component;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -17,10 +13,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
+import com.Message;
+import com.User;
+
 public class ChatFrame extends JFrame {
 
 	private ChatPanel chatPanel;
 	private Client client;
+
 	public ChatFrame(Client client) {
 		super("I Chat!");
 		this.client = client;
@@ -36,7 +36,7 @@ public class ChatFrame extends JFrame {
 
 		private JToolBar toolbar;
 		private JButton newChat;
-		
+
 		public ChatPanel() {
 
 			super();
@@ -60,27 +60,19 @@ public class ChatFrame extends JFrame {
 			toolbar.setOrientation(JToolBar.VERTICAL);
 			toolbar.setOpaque(false);
 			add(toolbar, BorderLayout.WEST);
-			
+
 			newChat.addActionListener(new ActionListener() {
-				
+
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String username = JOptionPane.showInputDialog(null);
-					try {
-						PrintWriter pw = new PrintWriter(client.getSocket().getOutputStream());
-						pw.write(username);
-						BufferedReader br = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-//					String str = br.readLine();
-//					if(str.equals("true")){
-//						
-//					}
-//					else{
-//						
-//					}
+					new Message(Message.USERNAME, Message.CLIENT,
+							Message.SERVER, username).send(client.getSocket());;
+					String msg = Message.recieveMessage(client.getSocket())
+							.getMessage();
+					String[] tokens = msg.split(",");
+					new ChatRoom(client, new User(tokens[0], tokens[1],
+							tokens[2], tokens[3]));
 				}
 			});
 		}
