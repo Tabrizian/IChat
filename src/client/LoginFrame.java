@@ -27,10 +27,6 @@ import com.User;
 public class LoginFrame extends JFrame {
 
 	private LoginPanel panel;
-	private static final Color blue = new Color(43, 129, 254);
-	private static final Font defaultFont = new Font("Comic Sans MS",
-			Font.BOLD, 15);
-	private static final Font ichatFont = new Font("Kristen ITC", Font.BOLD, 40);
 	private Client client;
 
 	public LoginFrame(Client client) {
@@ -74,11 +70,11 @@ public class LoginFrame extends JFrame {
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
 
 			ichat = new JLabel("iChat!");
-			ichat.setFont(ichatFont);
-			ichat.setForeground(blue);
+			ichat.setFont(Styling.ichatFont);
+			ichat.setForeground(Styling.blue);
 
-			makeStyledButton(login);
-			makeStyledButton(signup);
+			Styling.makeStyledButton(login);
+			Styling.makeStyledButton(signup);
 
 			int t = gc.anchor;
 
@@ -148,7 +144,7 @@ public class LoginFrame extends JFrame {
 						}
 						new ChatFrame(client);
 						LoginFrame.this.dispose();
-						
+
 					} else {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login failed!");
@@ -168,11 +164,5 @@ public class LoginFrame extends JFrame {
 			});
 		}
 
-		private void makeStyledButton(JButton login) {
-			login.setBackground(blue);
-			login.setForeground(Color.white);
-			login.setFont(defaultFont);
-			login.setBorderPainted(false);
-		}
 	}
 }

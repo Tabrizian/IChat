@@ -6,10 +6,10 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 
 import com.Message;
 import com.User;
@@ -20,17 +20,26 @@ public class ChatRoom extends JFrame {
 	private User dest;
 	private ChatPanel chatPanel;
 	private Thread thread;
+	private JPanel profile;
+	private JLabel destName;
 
 	public ChatRoom(Client client, User dest) {
 		this.client = client;
 		this.dest = dest;
 
 		chatPanel = new ChatPanel();
+		profile = new JPanel();
+		destName = new JLabel(dest.getFirstName() + " " + dest.getLastName());
+
+		profile.add(destName, BorderLayout.WEST);
+		// profile.add(,BorderLayout.EAST)
+
+		setLayout(new BorderLayout());
+		add(profile, BorderLayout.NORTH);
+		add(chatPanel, BorderLayout.CENTER);
 
 		setVisible(true);
-		setSize(500, 500);
-		setLayout(new BorderLayout());
-		add(chatPanel, BorderLayout.CENTER);
+		setSize(800, 800);
 	}
 
 	private class ChatPanel extends JPanel {
@@ -51,8 +60,8 @@ public class ChatRoom extends JFrame {
 				while (true) {
 
 					Message msg = Message.recieveMessage(client.getSocket());
-
-					messagePane.append(msg.getMessage());
+					messagePane.append("\n" + ChatRoom.this.dest.getFirstName()
+							+ ": " + msg.getMessage());
 					try {
 						Thread.sleep(50);
 					} catch (InterruptedException e) {
@@ -74,14 +83,13 @@ public class ChatRoom extends JFrame {
 					new Message(Message.SEND, client.getUser().getUsername(),
 							dest.getUsername(), message.getText()).send(client
 							.getSocket());
-
+					messagePane.append("\n" + ChatRoom.this.client.getUser().getFirstName()+ ": " + message.getText());
 					message.setText("");
 
 				}
 			});
 
 		}
-
 	}
 
 }

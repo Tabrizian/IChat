@@ -24,9 +24,6 @@ public class SignupFrame extends JFrame {
 
 	private SignupPanel signupPanel;
 	private Client client;
-	private static final Color blue = new Color(43, 129, 254);
-	private static final Font defaultFont = new Font("Comic Sans MS",
-			Font.BOLD, 15);
 
 	public SignupFrame(Client client) {
 		super("Sign up");
@@ -59,7 +56,7 @@ public class SignupFrame extends JFrame {
 			signup = new JButton("Sign up");
 			check = new JLabel();
 
-			makeStyledButton(signup);
+			Styling.makeStyledButton(signup);
 
 			setLayout(new GridBagLayout());
 			GridBagConstraints gc = new GridBagConstraints();
@@ -154,12 +151,7 @@ public class SignupFrame extends JFrame {
 
 		}
 
-		private void makeStyledButton(JButton login) {
-			login.setBackground(blue);
-			login.setForeground(Color.white);
-			login.setFont(defaultFont);
-			login.setBorderPainted(false);
-		}
+		
 	}
 
 }

@@ -9,12 +9,12 @@ import java.net.UnknownHostException;
 import com.User;
 
 public class Client implements Serializable {
-	
+
 	private Socket socket;
 	private static final String server = "Iman";
 	private User user = null;
-	
-	private Client(){
+
+	private Client() {
 		try {
 			socket = new Socket(InetAddress.getByName(server), 1373);
 			socket.getOutputStream();
@@ -28,20 +28,21 @@ public class Client implements Serializable {
 		}
 		new LoginFrame(this);
 	}
-	public static void main(String[] args) {		
+
+	public static void main(String[] args) {
 		new Client();
-		
+
 	}
-	
-	public void setUser(User user){
+
+	public void setUser(User user) {
 		this.user = user;
 	}
-	
-	public User getUser(){
+
+	public User getUser() {
 		return user;
 	}
-	
-	public Socket getSocket(){
+
+	public Socket getSocket() {
 		return socket;
 	}
 
