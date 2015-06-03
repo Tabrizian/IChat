@@ -43,6 +43,7 @@ public class UsersDatabase {
 				userAndPass.put(user.getUsername(), user.getPassword());
 				users.add(user);
 				writeUser(user);
+				makeDirForUser(user.getUsername());
 				return true;
 			} else {
 				return false;
@@ -54,6 +55,7 @@ public class UsersDatabase {
 		userAndPass.put(user.getUsername(), user.getPassword());
 		users.add(user);
 		writeUser(user);
+		
 
 	}
 
@@ -128,5 +130,9 @@ public class UsersDatabase {
 				return user;
 		}
 		return null;
+	}
+	
+	public void makeDirForUser(String username){
+		new File("data/UserData/" + username).mkdir();
 	}
 }

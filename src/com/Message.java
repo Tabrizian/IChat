@@ -40,12 +40,10 @@ public class Message implements Serializable {
 		try {
 			OutputStream out = socket.getOutputStream();
 			PrintWriter pw = new PrintWriter(out);
-//			String s = verb + "|" + source_ID + "|" + dest_ID + "|" + length + "|" + message;
 			pw.println(verb);
 			pw.println(source_ID);
 			pw.println(dest_ID);
 			pw.println(message);
-//			pw.println(length);
 			out.flush();
 			pw.flush();
 		} catch (IOException e) {
@@ -74,6 +72,8 @@ public class Message implements Serializable {
 	public String getMessage() {
 		return message;
 	}
+	
+	
 
 	public static Message recieveMessage(Socket socket) {
 		Message message = null;
