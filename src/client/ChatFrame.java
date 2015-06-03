@@ -36,6 +36,8 @@ public class ChatFrame extends JFrame {
 
 		private JToolBar toolbar;
 		private JButton newChat;
+		private MessageCenter messageCenter = MessageCenter
+				.getMessageCenter(client.getSocket());
 
 		public ChatPanel() {
 
@@ -66,9 +68,9 @@ public class ChatFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					String username = JOptionPane.showInputDialog(null);
-					new Message(Message.USERNAME, Message.CLIENT,
-							Message.SERVER, username).send(client.getSocket());;
-					String msg = Message.recieveMessage(client.getSocket())
+					messageCenter.sendMessage(new Message(Message.USERNAME,
+							Message.CLIENT, Message.SERVER, username));
+					String msg = messageCenter.getMessage(Message.USERNAME)
 							.getMessage();
 					String[] tokens = msg.split(",");
 					new ChatRoom(client, new User(tokens[0], tokens[1],
@@ -76,8 +78,6 @@ public class ChatFrame extends JFrame {
 				}
 			});
 		}
-
-		
 
 	}
 

@@ -16,6 +16,7 @@ import java.util.Scanner;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -31,25 +32,43 @@ public class ChatRoom extends JFrame {
 	private Thread thread;
 	private JPanel profile;
 	private JLabel destName;
-	private File history;
+	private File thisHistory;
+	private File destHistory;
+	private String destFile;
+	private String thisFile;
+	private boolean destIsOnline;
 
 	public ChatRoom(Client client, User dest) {
+		destFile = "data/UserData/" + dest.getUsername() + "/"
+				+ client.getUser().getUsername();
+		thisFile = "data/UserData/" + client.getUser().getUsername() + "/"
+				+ dest.getUsername();
 		this.client = client;
 		this.dest = dest;
-		history = new File("data/UserData/" + client.getUser().getUsername()
-				+ "/" + dest.getUsername());
-		if (!history.isFile()) {
+		thisHistory = new File(thisFile);
+		if (!thisHistory.isFile()) {
 			try {
-				new File("data/UserData/" + client.getUser().getUsername()
-						+ "/" + dest.getUsername()).createNewFile();
+				new File(thisFile).createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+
+		destHistory = new File(destFile);
+		if (!destHistory.isFile()) {
+			try {
+				new File(thisFile).createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		chatPanel = new ChatPanel();
 		profile = new JPanel();
 		destName = new JLabel(dest.getFirstName() + " " + dest.getLastName());
 
+		chatPanel.refreshStatus();
 		profile.add(destName, BorderLayout.WEST);
 		// profile.add(,BorderLayout.EAST)
 
@@ -67,6 +86,8 @@ public class ChatRoom extends JFrame {
 		private JTextField message;
 		private JButton send;
 		private JPanel sendArea;
+		private MessageCenter messageCenter = MessageCenter
+				.getMessageCenter(client.getSocket());
 
 		public ChatPanel() {
 
@@ -86,8 +107,15 @@ public class ChatRoom extends JFrame {
 
 			Runnable r = () -> {
 				while (true) {
+					try {
+						wait();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 
-					Message msg = Message.recieveMessage(client.getSocket());
+					Message msg = messageCenter.getMessage(Message.SEND);
+
 					String payam = "\n" + ChatRoom.this.dest.getFirstName()
 							+ ": " + msg.getMessage();
 					messagePane.append(payam);
@@ -98,6 +126,7 @@ public class ChatRoom extends JFrame {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+
 				}
 			};
 
@@ -114,9 +143,9 @@ public class ChatRoom extends JFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					new Message(Message.SEND, client.getUser().getUsername(),
-							dest.getUsername(), message.getText()).send(client
-							.getSocket());
+					messageCenter.sendMessage((new Message(Message.SEND, client
+							.getUser().getUsername(), dest.getUsername(),
+							message.getText())));
 					String payam = "\n"
 							+ ChatRoom.this.client.getUser().getFirstName()
 							+ ": " + message.getText();
@@ -131,13 +160,26 @@ public class ChatRoom extends JFrame {
 
 		public void writeMessage(String text) {
 			try {
-				OutputStream out = new FileOutputStream(history, true);
-				PrintWriter pw = new PrintWriter(out);
-				pw.print(text);
-				out.flush();
-				pw.flush();
-				out.close();
-				pw.close();
+				OutputStream out1 = new FileOutputStream(thisHistory, true);
+
+				PrintWriter pw1 = new PrintWriter(out1);
+				pw1.print(text);
+				out1.flush();
+				pw1.flush();
+				out1.close();
+				pw1.close();
+				chatPanel.refreshStatus();
+				if (!destIsOnline) {
+					OutputStream out2 = new FileOutputStream(destHistory, true);
+
+					PrintWriter pw2 = new PrintWriter(out2);
+					pw2.print(text);
+					out2.flush();
+					pw2.flush();
+					out2.close();
+					pw2.close();
+				}
+
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -146,15 +188,28 @@ public class ChatRoom extends JFrame {
 
 		public void init() {
 			try {
-				InputStream in = new FileInputStream(history);
+				InputStream in = new FileInputStream(thisHistory);
 				Scanner scanner = new Scanner(in);
 				String input;
 				while ((input = scanner.nextLine()) != null) {
-					messagePane.append(input+"\n");
+					messagePane.append(input + "\n");
 				}
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+		}
+
+		public void refreshStatus() {
+			messageCenter.sendMessage(new Message(Message.STATUS, Message.CLIENT, Message.SERVER,
+					dest.getUsername()));
+			Message msg = messageCenter.getMessage(Message.STATUS);
+			if (msg.getMessage().equals("true")) {
+				JOptionPane.showMessageDialog(null, "Is online.");
+				destIsOnline = true;
+			} else {
+				JOptionPane.showMessageDialog(null, "Is offline");
+				destIsOnline = false;
 			}
 		}
 	}

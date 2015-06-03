@@ -19,6 +19,7 @@ public class Message implements Serializable {
 	public static final String AUTH = "4";
 	public static final String USERNAME = "5";
 	public static final String ADDTOCHAT = "6";
+	public static final String STATUS = "7";
 	public static final String SERVER = "SERVER";
 	public static final String CLIENT = "CLIENT";
 

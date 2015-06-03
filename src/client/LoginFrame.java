@@ -50,6 +50,8 @@ public class LoginFrame extends JFrame {
 		private JTextField username;
 		private JPasswordField password;
 		private JLabel ichat;
+		private MessageCenter messageCenter = MessageCenter
+				.getMessageCenter(client.getSocket());
 
 		public LoginPanel() {
 			setLayout(new GridBagLayout());
@@ -108,18 +110,18 @@ public class LoginFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
-					new Message(Message.LOGIN, "", Message.SERVER, username
-							.getText() + "," + password.getText()).send(client
-							.getSocket());
+					messageCenter.sendMessage(new Message(Message.LOGIN, "",
+							Message.SERVER, username.getText() + ","
+									+ password.getText()));
 					Message message = null;
 
-					message = Message.recieveMessage(client.getSocket());
+					message = messageCenter.getMessage(Message.LOGIN);
 
 					if (message.getMessage().equals("SUCCESS")) {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login was successful!");
-
-						Message ms = Message.recieveMessage(client.getSocket());
+						
+						Message ms = messageCenter.getMessage(Message.LOGIN);
 						String[] tokens = ms.getMessage().split(",");
 						User user = new User(tokens[0], tokens[1], tokens[2],
 								tokens[3]);
@@ -145,6 +147,5 @@ public class LoginFrame extends JFrame {
 				}
 			});
 		}
-
 	}
 }

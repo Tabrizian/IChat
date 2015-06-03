@@ -1,6 +1,7 @@
 package server;
 
 import java.net.Socket;
+import java.net.SocketException;
 
 import com.Message;
 import com.User;
@@ -15,7 +16,7 @@ public class Handler implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (isRunning()) {
 			try {
 				Message message = null;
 				message = Message.recieveMessage(socket);
@@ -45,7 +46,7 @@ public class Handler implements Runnable {
 								Message.CLIENT, "SUCCESS").send(socket);
 						User user = UsersDatabase.getUsersDataBase().getUser(
 								username);
-						new Message(Message.USERNAME, Message.SERVER,
+						new Message(Message.LOGIN, Message.SERVER,
 								Message.CLIENT, user.toString()).send(socket);
 						ClientsDatabase.getClientsDatabase().add(this, user);
 
@@ -68,10 +69,10 @@ public class Handler implements Runnable {
 							new User(firstName, lastName, username, password),
 							true);
 					if (!added) {
-						new Message(Message.AUTH, Message.SERVER,
+						new Message(Message.SIGNUP, Message.SERVER,
 								Message.CLIENT, "false").send(socket);
 					} else {
-						new Message(Message.AUTH, Message.SERVER,
+						new Message(Message.SIGNUP, Message.SERVER,
 								Message.CLIENT, "true").send(socket);
 					}
 					break;
@@ -97,9 +98,19 @@ public class Handler implements Runnable {
 					break;
 				}
 
+				case Message.STATUS: {
+					if (ClientsDatabase.getClientsDatabase().isAvailable(
+							message.getMessage()))
+						new Message(Message.STATUS, Message.SERVER,
+								Message.CLIENT, "true").send(socket);
+					else
+						new Message(Message.STATUS, Message.SERVER,
+								Message.CLIENT, "false").send(socket);
+				}
 				}
 			} catch (Exception e) {
-				ClientsDatabase.getClientsDatabase().refresh();
+				ClientsDatabase.getClientsDatabase().remove(this);
+				break;
 			}
 		}
 

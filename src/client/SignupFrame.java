@@ -32,7 +32,7 @@ public class SignupFrame extends JFrame {
 
 		signupPanel = new SignupPanel();
 		add(signupPanel, BorderLayout.CENTER);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(300, 400);
 		setVisible(true);
 
@@ -46,6 +46,8 @@ public class SignupFrame extends JFrame {
 		private JTextField lastname;
 		private JButton signup;
 		private JLabel check;
+		private MessageCenter messageCenter = MessageCenter
+				.getMessageCenter(client.getSocket());
 
 		public SignupPanel() {
 			super();
@@ -91,20 +93,22 @@ public class SignupFrame extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 
-					new Message(Message.SIGNUP, "", Message.SERVER, username
-							.getText()
-							+ ","
-							+ password.getText()
-							+ ","
-							+ firstname.getText() + "," + lastname.getText())
-							.send(client.getSocket());
-					
-					Message message = Message.recieveMessage(client.getSocket());
-					if(message.getMessage().equals("true")){
-						JOptionPane.showMessageDialog(SignupFrame.this, "Signup was successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+					messageCenter.sendMessage(new Message(Message.SIGNUP, "",
+							Message.SERVER, username.getText() + ","
+									+ password.getText() + ","
+									+ firstname.getText() + ","
+									+ lastname.getText()));
+
+					Message message = messageCenter.getMessage(Message.SIGNUP);
+					if (message.getMessage().equals("true")) {
+						JOptionPane.showMessageDialog(SignupFrame.this,
+								"Signup was successful!", "Success",
+								JOptionPane.INFORMATION_MESSAGE);
 						SignupFrame.this.dispose();
-					}else{
-						JOptionPane.showMessageDialog(SignupFrame.this, "Username already exist!", "Failure", JOptionPane.ERROR_MESSAGE);
+					} else {
+						JOptionPane.showMessageDialog(SignupFrame.this,
+								"Username already exist!", "Failure",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			});
@@ -113,10 +117,9 @@ public class SignupFrame extends JFrame {
 
 				@Override
 				public void keyTyped(KeyEvent e) {
-					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
-							username.getText()).send(client.getSocket());
-					if (Message.recieveMessage(client.getSocket()).getMessage()
-							.equals("true")) {
+					messageCenter.sendMessage(new Message(Message.AUTH,
+							Message.CLIENT, Message.SERVER, username.getText()));
+					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
 						check.setText("Check!");
 					} else {
 						check.setText("X");
@@ -125,23 +128,20 @@ public class SignupFrame extends JFrame {
 
 				@Override
 				public void keyReleased(KeyEvent e) {
-					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
-							username.getText()).send(client.getSocket());
-					if (Message.recieveMessage(client.getSocket()).getMessage()
-							.equals("true")) {
+					messageCenter.sendMessage(new Message(Message.AUTH,
+							Message.CLIENT, Message.SERVER, username.getText()));
+					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
 						check.setText("Check!");
 					} else {
 						check.setText("X");
 					}
-
 				}
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					new Message(Message.AUTH, Message.CLIENT, Message.SERVER,
-							username.getText()).send(client.getSocket());
-					if (Message.recieveMessage(client.getSocket()).getMessage()
-							.equals("true")) {
+					messageCenter.sendMessage(new Message(Message.AUTH,
+							Message.CLIENT, Message.SERVER, username.getText()));
+					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
 						check.setText("Check!");
 					} else {
 						check.setText("X");
@@ -150,8 +150,6 @@ public class SignupFrame extends JFrame {
 			});
 
 		}
-
-		
 	}
 
 }

@@ -19,6 +19,7 @@ public class Client implements Serializable {
 			socket = (new Socket(InetAddress.getByName(server), 1373));
 			socket.getOutputStream();
 			socket.getInputStream();
+			new Thread(MessageCenter.getMessageCenter(socket)).start();;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -31,6 +32,7 @@ public class Client implements Serializable {
 
 	public static void main(String[] args) {
 		new Client();
+		
 
 	}
 
