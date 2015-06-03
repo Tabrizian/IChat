@@ -16,7 +16,7 @@ public class Client implements Serializable {
 
 	private Client() {
 		try {
-			socket = new Socket(InetAddress.getByName(server), 1373);
+			socket = (new Socket(InetAddress.getByName(server), 1373));
 			socket.getOutputStream();
 			socket.getInputStream();
 		} catch (UnknownHostException e) {

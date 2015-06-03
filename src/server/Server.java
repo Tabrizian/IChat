@@ -11,7 +11,7 @@ public class Server {
 		try {
 			ServerSocket ss = new ServerSocket(1373);
 			while (true) {
-				Socket client = ss.accept();
+				Socket client = (ss.accept());
 				new Thread(new Handler(client)).start();
 			}
 		} catch (IOException e) {

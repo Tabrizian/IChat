@@ -2,7 +2,9 @@ package client;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class Styling {
@@ -18,5 +20,14 @@ public class Styling {
 		login.setForeground(Color.white);
 		login.setFont(defaultFont);
 		login.setBorderPainted(false);
+	}
+	
+	public static ImageIcon makeGoodIcon(String path) {
+		ImageIcon icon = new ImageIcon(path);
+		Image img = icon.getImage();
+		Image newImage = img.getScaledInstance(50, 50,
+				java.awt.Image.SCALE_SMOOTH);
+		ImageIcon good = new ImageIcon(newImage);
+		return good;
 	}
 }

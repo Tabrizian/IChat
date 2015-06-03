@@ -39,7 +39,7 @@ public class ChatRoom extends JFrame {
 		add(chatPanel, BorderLayout.CENTER);
 
 		setVisible(true);
-		setSize(800, 800);
+		setSize(500, 500);
 	}
 
 	private class ChatPanel extends JPanel {
@@ -47,12 +47,15 @@ public class ChatRoom extends JFrame {
 		private JTextArea messagePane;
 		private JTextField message;
 		private JButton send;
-
+		private JPanel sendArea;
 		public ChatPanel() {
 
 			message = new JTextField();
 			messagePane = new JTextArea();
 			send = new JButton("Send");
+			sendArea = new JPanel();
+			
+			Styling.makeStyledButton(send);
 
 			setLayout(new BorderLayout());
 
@@ -70,11 +73,15 @@ public class ChatRoom extends JFrame {
 					}
 				}
 			};
+			
 			thread = new Thread(r);
 			thread.start();
+			
+			sendArea.setLayout(new BorderLayout());
+			sendArea.add(send,BorderLayout.EAST);
+			sendArea.add(message,BorderLayout.CENTER);
 			add(messagePane, BorderLayout.CENTER);
-			add(message, BorderLayout.SOUTH);
-			add(send, BorderLayout.NORTH);
+			add(sendArea, BorderLayout.SOUTH);
 
 			send.addActionListener(new ActionListener() {
 

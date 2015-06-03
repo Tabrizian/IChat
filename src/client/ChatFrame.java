@@ -54,7 +54,7 @@ public class ChatFrame extends JFrame {
 				}
 			};
 
-			newChat = new JButton(makeGoodIcon("pics/Plus.png"));
+			newChat = new JButton(Styling.makeGoodIcon("pics/Plus.png"));
 			toolbar.setFloatable(false);
 			toolbar.add(newChat);
 			toolbar.setOrientation(JToolBar.VERTICAL);
@@ -77,14 +77,7 @@ public class ChatFrame extends JFrame {
 			});
 		}
 
-		private ImageIcon makeGoodIcon(String path) {
-			ImageIcon icon = new ImageIcon(path);
-			Image img = icon.getImage();
-			Image newImage = img.getScaledInstance(50, 50,
-					java.awt.Image.SCALE_SMOOTH);
-			ImageIcon good = new ImageIcon(newImage);
-			return good;
-		}
+		
 
 	}
 

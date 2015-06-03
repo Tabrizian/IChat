@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 
-public class Message implements Serializable{
+public class Message implements Serializable {
 
 	public static final int SEND = 0;
 	public static final int DELIVERED = 1;
@@ -18,7 +18,7 @@ public class Message implements Serializable{
 	public static final int ADDTOCHAT = 6;
 	public static final String SERVER = "SERVER";
 	public static final String CLIENT = "CLIENT";
-	
+
 	private int verb;
 	private String source_ID;
 	private String dest_ID;
@@ -32,18 +32,19 @@ public class Message implements Serializable{
 		this.message = message;
 		length = message.length();
 	}
-	
-	public void send(Socket socket){
+
+	public void send(Socket socket)  {
 		try {
 			OutputStream out = socket.getOutputStream();
 			ObjectOutputStream obj = new ObjectOutputStream(out);
 			obj.writeObject(this);
 			out.flush();
-			
+	
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 
 	public int getVerb() {
@@ -65,12 +66,14 @@ public class Message implements Serializable{
 	public String getMessage() {
 		return message;
 	}
-	
-	public static Message recieveMessage(Socket socket){
+
+	public static Message recieveMessage(Socket socket) {
 		Message message = null;
 		try {
-			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
+			ObjectInputStream in = new ObjectInputStream(
+					socket.getInputStream());
 			message = (Message) in.readObject();
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
