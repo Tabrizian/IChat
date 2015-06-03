@@ -1,7 +1,5 @@
 package server;
 
-import java.io.InputStream;
-import java.io.ObjectInputStream;
 import java.net.Socket;
 
 import com.Message;
@@ -20,10 +18,7 @@ public class Handler implements Runnable {
 		while (true) {
 			try {
 				Message message = null;
-
-				InputStream in = socket.getInputStream();
-				ObjectInputStream input = new ObjectInputStream(in);
-				message = (Message) input.readObject();
+				message = Message.recieveMessage(socket);
 
 				switch (message.getVerb()) {
 

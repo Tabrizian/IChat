@@ -112,36 +112,18 @@ public class LoginFrame extends JFrame {
 							.getText() + "," + password.getText()).send(client
 							.getSocket());
 					Message message = null;
-					try {
-						InputStream in = client.getSocket().getInputStream();
-						ObjectInputStream input = new ObjectInputStream(in);
-						message = (Message) input.readObject();
-					} catch (ClassNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+
+					message = Message.recieveMessage(client.getSocket());
+
 					if (message.getMessage().equals("SUCCESS")) {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login was successful!");
-						try {
-							InputStream in = client.getSocket()
-									.getInputStream();
-							ObjectInputStream input = new ObjectInputStream(in);
-							Message ms = (Message) input.readObject();
-							String[] tokens = ms.getMessage().split(",");
-							User user = new User(tokens[0], tokens[1],
-									tokens[2], tokens[3]);
-							client.setUser(user);
-						} catch (ClassNotFoundException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+
+						Message ms = Message.recieveMessage(client.getSocket());
+						String[] tokens = ms.getMessage().split(",");
+						User user = new User(tokens[0], tokens[1], tokens[2],
+								tokens[3]);
+						client.setUser(user);
 						new ChatFrame(client);
 						LoginFrame.this.dispose();
 

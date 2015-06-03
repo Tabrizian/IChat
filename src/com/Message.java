@@ -1,45 +1,53 @@
 package com;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Message implements Serializable {
 
-	public static final int SEND = 0;
-	public static final int DELIVERED = 1;
-	public static final int LOGIN = 2;
-	public static final int SIGNUP = 3;
-	public static final int AUTH = 4;
-	public static final int USERNAME = 5;
-	public static final int ADDTOCHAT = 6;
+	public static final String SEND = "0";
+	public static final String DELIVERED = "1";
+	public static final String LOGIN = "2";
+	public static final String SIGNUP = "3";
+	public static final String AUTH = "4";
+	public static final String USERNAME = "5";
+	public static final String ADDTOCHAT = "6";
 	public static final String SERVER = "SERVER";
 	public static final String CLIENT = "CLIENT";
 
-	private int verb;
+	private String verb;
 	private String source_ID;
 	private String dest_ID;
-	private int length;
+	private String length;
 	private String message;
 
-	public Message(int verb, String source_ID, String dest_ID, String message) {
+	public Message(String verb, String source_ID, String dest_ID, String message) {
 		this.verb = verb;
 		this.source_ID = source_ID;
 		this.dest_ID = dest_ID;
 		this.message = message;
-		length = message.length();
+		length = String.valueOf(message.length());
 	}
 
-	public void send(Socket socket)  {
+	public void send(Socket socket) {
 		try {
 			OutputStream out = socket.getOutputStream();
-			ObjectOutputStream obj = new ObjectOutputStream(out);
-			obj.writeObject(this);
+			PrintWriter pw = new PrintWriter(out);
+//			String s = verb + "|" + source_ID + "|" + dest_ID + "|" + length + "|" + message;
+			pw.println(verb);
+			pw.println(source_ID);
+			pw.println(dest_ID);
+			pw.println(message);
+//			pw.println(length);
 			out.flush();
-	
+			pw.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -47,7 +55,7 @@ public class Message implements Serializable {
 
 	}
 
-	public int getVerb() {
+	public String getVerb() {
 		return verb;
 	}
 
@@ -59,7 +67,7 @@ public class Message implements Serializable {
 		return dest_ID;
 	}
 
-	public int getLength() {
+	public String getLength() {
 		return length;
 	}
 
@@ -70,13 +78,13 @@ public class Message implements Serializable {
 	public static Message recieveMessage(Socket socket) {
 		Message message = null;
 		try {
-			ObjectInputStream in = new ObjectInputStream(
-					socket.getInputStream());
-			message = (Message) in.readObject();
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			InputStream in = socket.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String v1 = br.readLine();
+			String s1 = br.readLine();
+			String s2 = br.readLine();
+			String s3 = br.readLine();
+			message = new Message(v1, s1, s2, s3);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
