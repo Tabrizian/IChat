@@ -11,6 +11,7 @@ public class MessageCenter implements Runnable {
 	private static MessageCenter instance = null;
 	private Socket socket;
 	private Vector<Message> messages;
+	private boolean flag = true;
 
 	private MessageCenter(Socket socket) {
 		messages = new Vector<>();
@@ -26,13 +27,16 @@ public class MessageCenter implements Runnable {
 
 	@Override
 	public void run() {
-	
+		synchronized (this) {
+
 			while (true) {
+
 				Message message = Message.recieveMessage(socket);
 				if (message.getVerb().equals(Message.SEND)) {
 					notify();
 				}
 				messages.add(message);
+
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -40,24 +44,22 @@ public class MessageCenter implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		
+		}
+
 	}
 
 	public Message getMessage(String verb) {
-		Message msg = null;
-		
-			Iterator<Message> iter = messages.iterator();
-			while (msg == null) {
-				while (iter.hasNext()) {
-					Message message = (Message) iter.next();
-					if (message.getVerb().equals(verb)) {
-						messages.remove(message);
-						msg = message;
-					}
 
+		Message msg = null;
+		while (msg == null) {
+			for (int i = 0; i < messages.size(); i++) {
+				if (messages.get(i).getVerb().equals(verb)) {
+					msg = messages.get(i);
+					messages.remove(i);
 				}
+
 			}
-		
+		}
 		return msg;
 	}
 

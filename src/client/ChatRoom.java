@@ -106,27 +106,30 @@ public class ChatRoom extends JFrame {
 			}
 
 			Runnable r = () -> {
-				while (true) {
-					try {
-						wait();
-					} catch (InterruptedException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+				synchronized (this) {
+
+					while (true) {
+						try {
+							wait();
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+						Message msg = messageCenter.getMessage(Message.SEND);
+
+						String payam = "\n" + ChatRoom.this.dest.getFirstName()
+								+ ": " + msg.getMessage();
+						messagePane.append(payam);
+						writeMessage(payam);
+						try {
+							Thread.sleep(50);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
 					}
-
-					Message msg = messageCenter.getMessage(Message.SEND);
-
-					String payam = "\n" + ChatRoom.this.dest.getFirstName()
-							+ ": " + msg.getMessage();
-					messagePane.append(payam);
-					writeMessage(payam);
-					try {
-						Thread.sleep(50);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
 				}
 			};
 
@@ -201,8 +204,8 @@ public class ChatRoom extends JFrame {
 		}
 
 		public void refreshStatus() {
-			messageCenter.sendMessage(new Message(Message.STATUS, Message.CLIENT, Message.SERVER,
-					dest.getUsername()));
+			messageCenter.sendMessage(new Message(Message.STATUS,
+					Message.CLIENT, Message.SERVER, dest.getUsername()));
 			Message msg = messageCenter.getMessage(Message.STATUS);
 			if (msg.getMessage().equals("true")) {
 				JOptionPane.showMessageDialog(null, "Is online.");
