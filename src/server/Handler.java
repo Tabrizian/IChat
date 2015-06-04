@@ -2,12 +2,14 @@ package server;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -117,7 +119,7 @@ public class Handler implements Runnable {
 					break;
 				}
 				case Message.HISTORY: {
-					if (message.getDest_ID() == "") {
+					if ("".equals(message.getDest_ID())) {
 						File thisHistory = new File(message.getSource_ID());
 
 						if (!thisHistory.isFile()) {
@@ -128,15 +130,23 @@ public class Handler implements Runnable {
 								e.printStackTrace();
 							}
 						}
-						OutputStream out1 = new FileOutputStream(thisHistory,
-								true);
+						try {
+							OutputStream out1 = new FileOutputStream(
+									thisHistory, true);
 
-						PrintWriter pw1 = new PrintWriter(out1);
-						pw1.print(message.getMessage());
-						out1.flush();
-						pw1.flush();
-						out1.close();
-						pw1.close();
+							PrintWriter pw1 = new PrintWriter(out1);
+							pw1.println(message.getMessage());
+							out1.flush();
+							pw1.flush();
+							out1.close();
+							pw1.close();
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					} else {
 						File destHistory = new File(message.getDest_ID());
 						File thisHistory = new File(message.getSource_ID());
@@ -144,7 +154,7 @@ public class Handler implements Runnable {
 							try {
 								new File(message.getDest_ID()).createNewFile();
 							} catch (IOException e) {
-								// TODO Auto-generated catch block
+								System.out.println(message.getSource_ID());
 								e.printStackTrace();
 							}
 						}
@@ -156,49 +166,99 @@ public class Handler implements Runnable {
 								e.printStackTrace();
 							}
 						}
-						OutputStream out1 = new FileOutputStream(thisHistory,
-								true);
+						try {
+							OutputStream out1 = new FileOutputStream(
+									thisHistory, true);
 
-						PrintWriter pw1 = new PrintWriter(out1);
-						pw1.print(message.getMessage());
-						out1.flush();
-						pw1.flush();
-						out1.close();
-						pw1.close();
+							PrintWriter pw1 = new PrintWriter(out1);
+							pw1.println(message.getMessage());
+							out1.flush();
+							pw1.flush();
+							out1.close();
+							pw1.close();
 
-						OutputStream out2 = new FileOutputStream(destHistory,
-								true);
+							OutputStream out2 = new FileOutputStream(
+									destHistory, true);
 
-						PrintWriter pw2 = new PrintWriter(out2);
-						pw2.print(message.getMessage());
-						out2.flush();
-						pw2.flush();
-						out2.close();
-						pw2.close();
+							PrintWriter pw2 = new PrintWriter(out2);
+							pw2.println(message.getMessage());
+							out2.flush();
+							pw2.flush();
+							out2.close();
+							pw2.close();
+						} catch (FileNotFoundException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
+					break;
 
+				}
+				case Message.FILELIST: {
+					try {
+						String str = message.getMessage();
+						String[] list = new File(str).list();
+						String msg = null;
+						if (list.length > 0)
+							msg = list[0];
+						for (int i = 1; i < list.length; i++) {
+							msg = msg + "," + list[i];
+						}
+						if(msg == null){
+							msg = "-";
+						}
+						new Message(Message.FILELIST, Message.CLIENT,
+								Message.SERVER, msg).send(socket);
+					} catch (Exception e) {
+
+					}
+					break;
 				}
 
 				case Message.INITHISTORY: {
 
 					StringBuilder str = new StringBuilder("");
+					Scanner scanner = null;
+					InputStream in = null;
 					try {
-						InputStream in = new FileInputStream(
-								message.getMessage());
-						Scanner scanner = new Scanner(in);
-						String input;
-						while ((input = scanner.nextLine()) != null) {
-							str.append(input + "\n");
-						}
+						System.out.println(message.getMessage());
+						File file = new File(message.getMessage());
+						if (file.isFile()) {
 
-						scanner.close();
+							try {
+								in = new FileInputStream(file);
+							} catch (FileNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+							scanner = new Scanner(in);
+							String input;
+							while ((input = scanner.nextLine()) != null) {
+								str.append(input);
+								str.append('+');
+							}
+
+							new Message(Message.INITHISTORY, Message.SERVER,
+									Message.CLIENT, str.toString())
+									.send(socket);
+
+							scanner.close();
+						} else {
+							new Message(Message.INITHISTORY, Message.SERVER,
+									Message.CLIENT, "").send(socket);
+						}
 					} catch (NoSuchElementException e) {
 						// TODO Auto-generated catch block
 						new Message(Message.INITHISTORY, Message.SERVER,
 								Message.CLIENT, str.toString()).send(socket);
-						
-					}
+						scanner.close();
 
+					}
+					break;
 				}
 				}
 			} catch (Exception e) {

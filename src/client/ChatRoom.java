@@ -88,10 +88,8 @@ public class ChatRoom extends JFrame {
 
 			setLayout(new BorderLayout());
 
-			try {
-				init();
-			} catch (Exception e1) {
-			}
+			init();
+
 			Runnable r = () -> {
 
 				while (good) {
@@ -101,10 +99,9 @@ public class ChatRoom extends JFrame {
 						Message message = messageCenter.getMessages().get(i);
 						if (message.getVerb().equals(Message.SEND)) {
 
-							String payam = "\n"
-									+ ChatRoom.this.dest.getFirstName() + ": "
-									+ message.getMessage();
-							messagePane.append(payam);
+							String payam = ChatRoom.this.dest.getFirstName()
+									+ ": " + message.getMessage();
+							messagePane.append("\n" + payam);
 							messageCenter.getMessages().remove(i);
 							writeMessage(payam);
 
@@ -143,10 +140,9 @@ public class ChatRoom extends JFrame {
 								client.getUser().getUsername(), dest
 										.getUsername(), message.getText())));
 					}
-					String payam = "\n"
-							+ ChatRoom.this.client.getUser().getFirstName()
-							+ ": " + message.getText();
-					messagePane.append(payam);
+					String payam = ChatRoom.this.client.getUser()
+							.getFirstName() + ": " + message.getText();
+					messagePane.append("\n" + payam);
 					writeMessage(payam);
 					message.setText("");
 
@@ -178,7 +174,11 @@ public class ChatRoom extends JFrame {
 							+ client.getUser().getUsername() + "/"
 							+ dest.getUsername()));
 			Message message = messageCenter.getMessage(Message.INITHISTORY);
-			messagePane.append(message.getMessage());
+			String[] tokens = message.getMessage().split("\\+");
+			System.out.println(tokens.length);
+			for (String string : tokens) {
+				messagePane.append(string + "\n");
+			}
 		}
 
 		public void refreshStatus() {

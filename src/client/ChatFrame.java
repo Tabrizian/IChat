@@ -64,23 +64,27 @@ public class ChatFrame extends JFrame {
 			chats = new JPanel();
 			chats.setLayout(new GridBagLayout());
 			add(chats, BorderLayout.CENTER);
-			File file = new File("data/UserData/"
-					+ client.getUser().getUsername());
-			String[] files = file.list();
-			int i = 0;
-			for (String string : files) {
-				GridBagConstraints gc = new GridBagConstraints();
-				gc.weightx = 1;
-				gc.weighty = 1;
-				gc.fill = GridBagConstraints.HORIZONTAL;
-				gc.anchor = GridBagConstraints.PAGE_START;
-				
-				gc.gridx = 0;
-				gc.gridy = i;
-				i++;
-				JPanel button = new ChatPack(string, client);
-				
-				chats.add(button, gc);
+			messageCenter.sendMessage(new Message(Message.FILELIST,
+					Message.CLIENT, Message.SERVER, "data/UserData/"
+							+ client.getUser().getUsername()));
+			Message message = messageCenter.getMessage(Message.FILELIST);
+			if (!message.getMessage().equals("-")) {
+				String[] files = message.getMessage().split(",");
+				int i = 0;
+				for (String string : files) {
+					GridBagConstraints gc = new GridBagConstraints();
+					gc.weightx = 1;
+					gc.weighty = 1;
+					gc.fill = GridBagConstraints.HORIZONTAL;
+					gc.anchor = GridBagConstraints.PAGE_START;
+
+					gc.gridx = 0;
+					gc.gridy = i;
+					i++;
+					JPanel button = new ChatPack(string, client);
+
+					chats.add(button, gc);
+				}
 			}
 			toolbar.setFloatable(false);
 			toolbar.add(newChat);
@@ -103,7 +107,6 @@ public class ChatFrame extends JFrame {
 				}
 			});
 		}
-
 	}
 
 }
