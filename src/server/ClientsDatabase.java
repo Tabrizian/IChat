@@ -43,24 +43,30 @@ public class ClientsDatabase {
 	public Handler getHandler(User user) {
 		return userAndHandlers.get(user);
 	}
-	
-	public boolean isAvailable(String username){
-		return userAndHandlers.containsKey(UsersDatabase.getUsersDataBase().getUser(username));	
+
+	public boolean isAvailable(String username) {
+		return userAndHandlers.containsKey(UsersDatabase.getUsersDataBase()
+				.getUser(username));
 	}
-	public boolean isAvailable(User user){
+
+	public boolean isAvailable(User user) {
 		return userAndHandlers.containsKey(user);
 	}
-	
-	public void remove(Handler handler){
+
+	public void remove(Handler handler) {
 		handlers.remove(handler);
 		Set<User> keySet = userAndHandlers.keySet();
 		Iterator<User> iterator = keySet.iterator();
 		while (iterator.hasNext()) {
 			User user = (User) iterator.next();
-			if(userAndHandlers.get(user).equals(handler)){
+			if (userAndHandlers.get(user).equals(handler)) {
 				iterator.remove();
 			}
 		}
+	}
+
+	public boolean sizeIsGood() {
+		return (handlers.size() <= 25);
 	}
 
 }

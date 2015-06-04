@@ -11,12 +11,20 @@ public class Server {
 		try {
 			ServerSocket ss = new ServerSocket(1373);
 			while (true) {
-				Socket client = (ss.accept());
-				new Thread(new Handler(client)).start();
+				if (ClientsDatabase.getClientsDatabase().sizeIsGood()) {
+					Socket client = (ss.accept());
+					new Thread(new Handler(client)).start();
+				}
+				try {
+					Thread.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		} catch (IOException e) {
-			
-//			e.printStackTrace();
+
+			// e.printStackTrace();
 		}
 
 	}

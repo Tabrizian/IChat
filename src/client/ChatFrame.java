@@ -2,11 +2,13 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Image;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -38,6 +40,7 @@ public class ChatFrame extends JFrame {
 		private JButton newChat;
 		private MessageCenter messageCenter = MessageCenter
 				.getMessageCenter(client.getSocket());
+		private JPanel chats;
 
 		public ChatPanel() {
 
@@ -57,6 +60,28 @@ public class ChatFrame extends JFrame {
 			};
 
 			newChat = new JButton(Styling.makeGoodIcon("pics/Plus.png"));
+
+			chats = new JPanel();
+			chats.setLayout(new GridBagLayout());
+			add(chats, BorderLayout.CENTER);
+			File file = new File("data/UserData/"
+					+ client.getUser().getUsername());
+			String[] files = file.list();
+			int i = 0;
+			for (String string : files) {
+				GridBagConstraints gc = new GridBagConstraints();
+				gc.weightx = 1;
+				gc.weighty = 1;
+				gc.fill = GridBagConstraints.HORIZONTAL;
+				gc.anchor = GridBagConstraints.PAGE_START;
+				
+				gc.gridx = 0;
+				gc.gridy = i;
+				i++;
+				JPanel button = new ChatPack(string, client);
+				
+				chats.add(button, gc);
+			}
 			toolbar.setFloatable(false);
 			toolbar.add(newChat);
 			toolbar.setOrientation(JToolBar.VERTICAL);

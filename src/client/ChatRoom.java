@@ -36,43 +36,17 @@ public class ChatRoom extends JFrame {
 	private Thread thread;
 	private JPanel profile;
 	private JLabel destName;
-	private File thisHistory;
-	private File destHistory;
-	private String destFile;
-	private String thisFile;
+
 	private boolean destIsOnline;
 	private boolean good = true;
 
 	public ChatRoom(Client client, User dest) {
-		destFile = "data/UserData/" + dest.getUsername() + "/"
-				+ client.getUser().getUsername();
-		thisFile = "data/UserData/" + client.getUser().getUsername() + "/"
-				+ dest.getUsername();
+
 		this.client = client;
 		this.dest = dest;
-		thisHistory = new File(thisFile);
-		if (!thisHistory.isFile()) {
-			try {
-				new File(thisFile).createNewFile();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		destHistory = new File(destFile);
-		if (!destHistory.isFile()) {
-			try {
-				new File(thisFile).createNewFile();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 		chatPanel = new ChatPanel();
 		profile = new JPanel();
 		destName = new JLabel(dest.getFirstName() + " " + dest.getLastName());
-
 		chatPanel.refreshStatus();
 		WindowListener listener = new WindowAdapter() {
 			@Override
@@ -121,23 +95,21 @@ public class ChatRoom extends JFrame {
 			Runnable r = () -> {
 
 				while (good) {
-						System.out.println("Running");
-						
-						for (int i = 0; i < messageCenter.getMessages().size(); i++) {
-							Message message = messageCenter.getMessages()
-									.get(i);
-							if (message.getVerb().equals(Message.SEND)) {
+					System.out.println("Running");
 
+					for (int i = 0; i < messageCenter.getMessages().size(); i++) {
+						Message message = messageCenter.getMessages().get(i);
+						if (message.getVerb().equals(Message.SEND)) {
 
-								String payam = "\n"
-										+ ChatRoom.this.dest.getFirstName()
-										+ ": " + message.getMessage();
-								messagePane.append(payam);
-								messageCenter.getMessages().remove(i);
-								writeMessage(payam);
+							String payam = "\n"
+									+ ChatRoom.this.dest.getFirstName() + ": "
+									+ message.getMessage();
+							messagePane.append(payam);
+							messageCenter.getMessages().remove(i);
+							writeMessage(payam);
 
-							}
-						
+						}
+
 					}
 
 					try {
@@ -184,49 +156,33 @@ public class ChatRoom extends JFrame {
 		}
 
 		public void writeMessage(String text) {
-			try {
-				OutputStream out1 = new FileOutputStream(thisHistory, true);
 
-				PrintWriter pw1 = new PrintWriter(out1);
-				pw1.print(text);
-				out1.flush();
-				pw1.flush();
-				out1.close();
-				pw1.close();
-				chatPanel.refreshStatus();
-				if (!destIsOnline) {
-					OutputStream out2 = new FileOutputStream(destHistory, true);
+			chatPanel.refreshStatus();
+			if (!destIsOnline) {
+				messageCenter.sendMessage(new Message(Message.HISTORY,
+						"data/UserData/" + client.getUser().getUsername() + "/"
+								+ dest.getUsername(), "data/UserData/"
+								+ dest.getUsername() + "/"
+								+ client.getUser().getUsername(), text));
 
-					PrintWriter pw2 = new PrintWriter(out2);
-					pw2.print(text);
-					out2.flush();
-					pw2.flush();
-					out2.close();
-					pw2.close();
-				}
-
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			} else {
+				messageCenter.sendMessage(new Message(Message.HISTORY,
+						"data/UserData/" + client.getUser().getUsername() + "/"
+								+ dest.getUsername(), "", text));
 			}
 		}
 
 		public void init() {
-			try {
-				InputStream in = new FileInputStream(thisHistory);
-				Scanner scanner = new Scanner(in);
-				String input;
-				while ((input = scanner.nextLine()) != null) {
-					messagePane.append(input + "\n");
-				}
-				scanner.close();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			messageCenter.sendMessage(new Message(Message.INITHISTORY,
+					Message.CLIENT, Message.SERVER, "data/UserData/"
+							+ client.getUser().getUsername() + "/"
+							+ dest.getUsername()));
+			Message message = messageCenter.getMessage(Message.INITHISTORY);
+			messagePane.append(message.getMessage());
 		}
 
 		public void refreshStatus() {
+			System.out.println(dest.getUsername());
 			messageCenter.sendMessage(new Message(Message.STATUS,
 					Message.CLIENT, Message.SERVER, dest.getUsername()));
 			Message msg = messageCenter.getMessage(Message.STATUS);

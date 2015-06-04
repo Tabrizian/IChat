@@ -20,6 +20,9 @@ public class Message implements Serializable {
 	public static final String USERNAME = "5";
 	public static final String ADDTOCHAT = "6";
 	public static final String STATUS = "7";
+	public static final String HISTORY = "8";
+	public static final String CHATTED = "9";
+	public static final String INITHISTORY = "10";
 	public static final String SERVER = "SERVER";
 	public static final String CLIENT = "CLIENT";
 
