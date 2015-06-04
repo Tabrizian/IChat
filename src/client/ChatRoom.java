@@ -3,6 +3,9 @@ package client;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -37,6 +41,7 @@ public class ChatRoom extends JFrame {
 	private String destFile;
 	private String thisFile;
 	private boolean destIsOnline;
+	private boolean good = true;
 
 	public ChatRoom(Client client, User dest) {
 		destFile = "data/UserData/" + dest.getUsername() + "/"
@@ -69,6 +74,14 @@ public class ChatRoom extends JFrame {
 		destName = new JLabel(dest.getFirstName() + " " + dest.getLastName());
 
 		chatPanel.refreshStatus();
+		WindowListener listener = new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				super.windowClosing(e);
+				good = false;
+			}
+		};
+		addWindowListener(listener);
 		profile.add(destName, BorderLayout.WEST);
 		// profile.add(,BorderLayout.EAST)
 
@@ -95,6 +108,7 @@ public class ChatRoom extends JFrame {
 			messagePane = new JTextArea();
 			send = new JButton("Send");
 			sendArea = new JPanel();
+			JScrollPane js = new JScrollPane(messagePane);
 
 			Styling.makeStyledButton(send);
 
@@ -104,51 +118,59 @@ public class ChatRoom extends JFrame {
 				init();
 			} catch (Exception e1) {
 			}
-
 			Runnable r = () -> {
-				synchronized (this) {
 
-					while (true) {
-						try {
-							wait();
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+				while (good) {
+						System.out.println("Running");
+						
+						for (int i = 0; i < messageCenter.getMessages().size(); i++) {
+							Message message = messageCenter.getMessages()
+									.get(i);
+							if (message.getVerb().equals(Message.SEND)) {
 
-						Message msg = messageCenter.getMessage(Message.SEND);
 
-						String payam = "\n" + ChatRoom.this.dest.getFirstName()
-								+ ": " + msg.getMessage();
-						messagePane.append(payam);
-						writeMessage(payam);
-						try {
-							Thread.sleep(50);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+								String payam = "\n"
+										+ ChatRoom.this.dest.getFirstName()
+										+ ": " + message.getMessage();
+								messagePane.append(payam);
+								messageCenter.getMessages().remove(i);
+								writeMessage(payam);
 
+							}
+						
 					}
+
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
 				}
+
 			};
 
 			thread = new Thread(r);
+
 			thread.start();
 
 			sendArea.setLayout(new BorderLayout());
 			sendArea.add(send, BorderLayout.EAST);
 			sendArea.add(message, BorderLayout.CENTER);
-			add(messagePane, BorderLayout.CENTER);
+			add(js, BorderLayout.CENTER);
 			add(sendArea, BorderLayout.SOUTH);
 
 			send.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					messageCenter.sendMessage((new Message(Message.SEND, client
-							.getUser().getUsername(), dest.getUsername(),
-							message.getText())));
+					refreshStatus();
+					if (destIsOnline) {
+						messageCenter.sendMessage((new Message(Message.SEND,
+								client.getUser().getUsername(), dest
+										.getUsername(), message.getText())));
+					}
 					String payam = "\n"
 							+ ChatRoom.this.client.getUser().getFirstName()
 							+ ": " + message.getText();
@@ -197,6 +219,7 @@ public class ChatRoom extends JFrame {
 				while ((input = scanner.nextLine()) != null) {
 					messagePane.append(input + "\n");
 				}
+				scanner.close();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

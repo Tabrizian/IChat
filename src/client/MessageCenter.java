@@ -1,7 +1,6 @@
 package client;
 
 import java.net.Socket;
-import java.util.Iterator;
 import java.util.Vector;
 
 import com.Message;
@@ -11,7 +10,6 @@ public class MessageCenter implements Runnable {
 	private static MessageCenter instance = null;
 	private Socket socket;
 	private Vector<Message> messages;
-	private boolean flag = true;
 
 	private MessageCenter(Socket socket) {
 		messages = new Vector<>();
@@ -27,23 +25,13 @@ public class MessageCenter implements Runnable {
 
 	@Override
 	public void run() {
-		synchronized (this) {
 
-			while (true) {
+		while (true) {
 
-				Message message = Message.recieveMessage(socket);
-				if (message.getVerb().equals(Message.SEND)) {
-					notify();
-				}
-				messages.add(message);
+			Message message = Message.recieveMessage(socket);
 
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
+			messages.addElement(message);
+
 		}
 
 	}
@@ -65,6 +53,10 @@ public class MessageCenter implements Runnable {
 
 	public void sendMessage(Message message) {
 		message.send(socket);
+	}
+
+	public Vector<Message> getMessages() {
+		return messages;
 	}
 
 }
