@@ -2,15 +2,16 @@ package client;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Font;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -37,6 +38,7 @@ public class LoginFrame extends JFrame {
 
 		setLayout(new BorderLayout());
 		panel = new LoginPanel();
+		add(new BorderPanel(this), BorderLayout.PAGE_START);
 		add(panel, BorderLayout.CENTER);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
@@ -55,8 +57,7 @@ public class LoginFrame extends JFrame {
 
 		public LoginPanel() {
 			setLayout(new GridBagLayout());
-			setBorder(BorderFactory.createLineBorder(Color.GRAY, 5));
-			setBackground(Color.WHITE);
+			Styling.makeStyledFrame(this);
 			GridBagConstraints gc = new GridBagConstraints();
 			gc.weightx = 1;
 			gc.weighty = 1;
@@ -69,7 +70,19 @@ public class LoginFrame extends JFrame {
 
 			username.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 			password.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+			TextFieldFocus focus1 = new TextFieldFocus("Username", username);
+			TextFieldFocus focus2 = new TextFieldFocus("Password", password);
+			username.addFocusListener(focus1);
+			username.addKeyListener(focus1);
+			password.addFocusListener(focus2);
+			password.addKeyListener(focus2);
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
+
+			ComponentResizer cr = new ComponentResizer();
+			cr.setMinimumSize(new Dimension(300, 300));
+			cr.setMaximumSize(new Dimension(800, 600));
+			cr.registerComponent(this);
+			cr.setSnapSize(new Dimension(10, 10));
 
 			ichat = new JLabel("iChat!");
 			ichat.setFont(Styling.ichatFont);
@@ -77,6 +90,8 @@ public class LoginFrame extends JFrame {
 
 			Styling.makeStyledButton(login);
 			Styling.makeStyledButton(signup);
+			Styling.makeStyledTextField(username);
+			Styling.makeStyledTextField(password);
 
 			int t = gc.anchor;
 
@@ -120,7 +135,7 @@ public class LoginFrame extends JFrame {
 					if (message.getMessage().equals("SUCCESS")) {
 						JOptionPane.showMessageDialog(LoginFrame.this,
 								"Login was successful!");
-						
+
 						Message ms = messageCenter.getMessage(Message.LOGIN);
 						String[] tokens = ms.getMessage().split(",");
 						User user = new User(tokens[0], tokens[1], tokens[2],
@@ -148,4 +163,5 @@ public class LoginFrame extends JFrame {
 			});
 		}
 	}
+
 }
