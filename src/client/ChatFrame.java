@@ -42,7 +42,7 @@ public class ChatFrame extends JFrame {
 		addWindowListener(listener);
 
 		setLocationRelativeTo(null);
-		
+
 		add(new BorderPanel(this), BorderLayout.NORTH);
 		add(chatPanel, BorderLayout.CENTER);
 		setUndecorated(true);
@@ -116,16 +116,20 @@ public class ChatFrame extends JFrame {
 
 				while (good) {
 					System.out.println("Running");
-					
+
 					for (int i = 0; i < messageCenter.getMessages().size(); i++) {
 						Message msg = messageCenter.getMessages().get(i);
 						if (message.getVerb().equals(Message.SEND)) {
-							messageCenter.sendMessage(new Message(Message.USERNAME,Message.CLIENT,Message.SERVER,msg.getSource_ID()));
-							Message username = messageCenter.getMessage(Message.USERNAME);
+							messageCenter.sendMessage(new Message(
+									Message.USERNAME, Message.CLIENT,
+									Message.SERVER, msg.getSource_ID()));
+							Message username = messageCenter
+									.getMessage(Message.USERNAME);
 							String[] tokens = username.getMessage().split(",");
-							User user = new User(tokens[0],tokens[1],tokens[2],tokens[3]);
-							String payam = user.getFirstName()
-									+ ": " + message.getMessage();
+							User user = new User(tokens[0], tokens[1],
+									tokens[2], tokens[3]);
+							String payam = user.getFirstName() + ": "
+									+ message.getMessage();
 							writeMessage(payam, user);
 						}
 
@@ -160,14 +164,19 @@ public class ChatFrame extends JFrame {
 					String msg = messageCenter.getMessage(Message.USERNAME)
 							.getMessage();
 					String[] tokens = msg.split(",");
-					new ChatRoom(client, new User(tokens[0], tokens[1],
-							tokens[2], tokens[3]));
+					if (!(tokens[0].equals("0") && tokens[1].equals("0")
+							&& tokens[2].equals("0") && tokens[3].equals("0")))
+						new ChatRoom(client, new User(tokens[0], tokens[1],
+								tokens[2], tokens[3]));
+					else {
+						JOptionPane.showMessageDialog(null, "Wrong username!","Wrong Username",JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			});
 
 		}
 
-		public void writeMessage(String text,User user) {
+		public void writeMessage(String text, User user) {
 
 			messageCenter.sendMessage(new Message(Message.HISTORY,
 					"data/UserData/" + client.getUser().getUsername() + "/"

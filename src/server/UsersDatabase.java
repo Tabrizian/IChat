@@ -129,7 +129,7 @@ public class UsersDatabase {
 			if(user.getUsername().equals(username))
 				return user;
 		}
-		return null;
+		return new User("0","0","0","0");
 	}
 	
 	public void makeDirForUser(String username){

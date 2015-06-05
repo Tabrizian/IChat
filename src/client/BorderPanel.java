@@ -29,7 +29,7 @@ public class BorderPanel extends JPanel{
 
 			label.addMouseListener(new MouseAdapter() {
 				public void mouseReleased(MouseEvent e) {
-					System.exit(0);
+					frame.dispose();
 				}
 			});
 			addMouseListener(new MouseAdapter() {

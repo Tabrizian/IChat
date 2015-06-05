@@ -7,6 +7,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -14,7 +18,6 @@ import java.awt.event.WindowListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
@@ -22,7 +25,7 @@ import javax.swing.JTextField;
 import com.Message;
 import com.User;
 
-public class ChatRoom extends JFrame {
+public class ChatRoom extends JFrame implements KeyListener{
 
 	private Client client;
 	private User dest;
@@ -86,7 +89,14 @@ public class ChatRoom extends JFrame {
 			send = new JButton("Send");
 			sendArea = new JPanel();
 			JScrollPane js = new JScrollPane(messagePane);
-
+			
+			//Makes Jscroll pane scroll to the bottom.
+			js.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
+		        public void adjustmentValueChanged(AdjustmentEvent e) {  
+		            e.getAdjustable().setValue(e.getAdjustable().getMaximum());  
+		        }
+		    });
+			
 			Styling.makeStyledButton(send);
 
 			setBackground(Color.WHITE);
@@ -100,6 +110,7 @@ public class ChatRoom extends JFrame {
 			gc.ipady = 15;
 			gc.insets = new Insets(10, 10, 10, 10);
 
+			message.addKeyListener(ChatRoom.this);
 			init();
 
 			Runnable r = () -> {
@@ -167,6 +178,10 @@ public class ChatRoom extends JFrame {
 			});
 
 		}
+		
+		public JButton getSend(){
+			return send;
+		}
 
 		public void writeMessage(String text) {
 
@@ -216,6 +231,24 @@ public class ChatRoom extends JFrame {
 				destIsOnline = false;
 			}
 		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		if(e.getKeyChar() == '\n')
+			chatPanel.getSend().doClick();
 	}
 
 }

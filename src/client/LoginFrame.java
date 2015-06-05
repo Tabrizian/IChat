@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -25,7 +27,7 @@ import javax.swing.JTextField;
 import com.Message;
 import com.User;
 
-public class LoginFrame extends JFrame {
+public class LoginFrame extends JFrame implements KeyListener{
 
 	private LoginPanel panel;
 	private Client client;
@@ -77,6 +79,12 @@ public class LoginFrame extends JFrame {
 			username.addKeyListener(focus1);
 			password.addFocusListener(focus2);
 			password.addKeyListener(focus2);
+			
+			username.setTransferHandler(null);
+			password.setTransferHandler(null);
+			
+			username.addKeyListener(LoginFrame.this);
+			password.addKeyListener(LoginFrame.this);
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
 			
 			ichat = new JLabel("iChat!");
@@ -128,9 +136,6 @@ public class LoginFrame extends JFrame {
 					message = messageCenter.getMessage(Message.LOGIN);
 
 					if (message.getMessage().equals("SUCCESS")) {
-						JOptionPane.showMessageDialog(LoginFrame.this,
-								"Login was successful!");
-
 						Message ms = messageCenter.getMessage(Message.LOGIN);
 						String[] tokens = ms.getMessage().split(",");
 						User user = new User(tokens[0], tokens[1], tokens[2],
@@ -157,6 +162,28 @@ public class LoginFrame extends JFrame {
 				}
 			});
 		}
+		
+		public JButton getLogin(){
+			return login;
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		if(e.getKeyChar() == '\n')
+			panel.getLogin().doClick();
 	}
 
 }

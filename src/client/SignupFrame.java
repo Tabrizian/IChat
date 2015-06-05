@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 
 import com.Message;
 
-public class SignupFrame extends JFrame {
+public class SignupFrame extends JFrame implements KeyListener{
 
 	private SignupPanel signupPanel;
 	private Client client;
@@ -126,6 +126,11 @@ public class SignupFrame extends JFrame {
 			gc.gridy = 1;
 			add(check, gc);
 
+			
+			username.addKeyListener(SignupFrame.this);
+			password.addKeyListener(SignupFrame.this);
+			firstname.addKeyListener(SignupFrame.this);
+			lastname.addKeyListener(SignupFrame.this);
 			signup.addActionListener(new ActionListener() {
 
 				@Override
@@ -197,6 +202,28 @@ public class SignupFrame extends JFrame {
 			});
 
 		}
+		
+		public JButton getSignup(){
+			return signup;
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		if(e.getKeyChar() == '\n')
+			signupPanel.getSignup().doClick();
 	}
 
 }

@@ -38,13 +38,25 @@ public class TextFieldFocus implements FocusListener, KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
+		JTextField test = (JTextField) e.getSource();
+		if (test.getText().equals(good)
+				&& test.getForeground().equals(Color.GRAY)) {
+			test.setText("");
+			test.setForeground(Color.BLACK);
+			
+		}
 
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		JTextField test = (JTextField) e.getSource();
+		if (test.getText().equals(good)
+				&& test.getForeground().equals(Color.GRAY)) {
+			test.setText("");
+			test.setForeground(Color.BLACK);
+			
+		}
 
 	}
 
@@ -55,6 +67,7 @@ public class TextFieldFocus implements FocusListener, KeyListener {
 				&& test.getForeground().equals(Color.GRAY)) {
 			test.setText("");
 			test.setForeground(Color.BLACK);
+			
 		}
 	}
 
