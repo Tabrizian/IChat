@@ -37,12 +37,7 @@ public class SignupFrame extends JFrame {
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setUndecorated(true);
 
-		ComponentResizer cr = new ComponentResizer();
-		cr.setMinimumSize(new Dimension(300, 300));
-		cr.setMaximumSize(new Dimension(800, 600));
-		cr.registerComponent(this);
-		cr.setSnapSize(new Dimension(10, 10));
-
+		setLocationRelativeTo(null);
 		setLocation(500, 300);
 		setSize(300, 400);
 		setVisible(true);

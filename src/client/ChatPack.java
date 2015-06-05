@@ -1,9 +1,12 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -16,14 +19,18 @@ public class ChatPack extends JPanel {
 	private Client client;
 	private MessageCenter messageCenter;
 	private JButton btn;
+
 	public ChatPack(String nameDest, Client client) {
 		this.nameDest = nameDest;
 		this.client = client;
 		btn = new JButton(nameDest);
-		setLayout(new BorderLayout());
-		add(btn,BorderLayout.PAGE_START);
-		messageCenter = MessageCenter.getMessageCenter(client.getSocket());
 		
+		
+		
+		setLayout(new BorderLayout());
+		add(btn, BorderLayout.PAGE_START);
+		messageCenter = MessageCenter.getMessageCenter(client.getSocket());
+
 		btn.addActionListener(new ActionListener() {
 
 			@Override
@@ -37,6 +44,9 @@ public class ChatPack extends JPanel {
 
 			}
 		});
+	}
+	public JButton getButton(){
+		return btn;
 	}
 
 }

@@ -26,7 +26,7 @@ public class Handler implements Runnable {
 
 	@Override
 	public void run() {
-		while (isRunning()) {
+		while (true) {
 			try {
 				Message message = null;
 				message = Message.recieveMessage(socket);
@@ -51,7 +51,9 @@ public class Handler implements Runnable {
 					String password = tokens[1];
 
 					if (UsersDatabase.getUsersDataBase().isValid(username,
-							password)) {
+							password)
+							&& !ClientsDatabase.getClientsDatabase()
+									.isAvailable(username)) {
 						new Message(Message.LOGIN, Message.SERVER,
 								Message.CLIENT, "SUCCESS").send(socket);
 						User user = UsersDatabase.getUsersDataBase().getUser(
@@ -207,7 +209,7 @@ public class Handler implements Runnable {
 						for (int i = 1; i < list.length; i++) {
 							msg = msg + "," + list[i];
 						}
-						if(msg == null){
+						if (msg == null) {
 							msg = "-";
 						}
 						new Message(Message.FILELIST, Message.CLIENT,

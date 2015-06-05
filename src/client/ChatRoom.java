@@ -1,20 +1,15 @@
 package client;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import com.Message;
@@ -36,7 +30,7 @@ public class ChatRoom extends JFrame {
 	private Thread thread;
 	private JPanel profile;
 	private JLabel destName;
-
+	private GridBagConstraints gc;
 	private boolean destIsOnline;
 	private boolean good = true;
 
@@ -45,7 +39,9 @@ public class ChatRoom extends JFrame {
 		this.client = client;
 		this.dest = dest;
 		chatPanel = new ChatPanel();
-		profile = new JPanel();
+		JPanel allOfComponents = new JPanel(new BorderLayout());
+		Styling.makeStyledFrame(allOfComponents);
+		profile = new JPanel(new BorderLayout());
 		destName = new JLabel(dest.getFirstName() + " " + dest.getLastName());
 		chatPanel.refreshStatus();
 		WindowListener listener = new WindowAdapter() {
@@ -56,20 +52,26 @@ public class ChatRoom extends JFrame {
 			}
 		};
 		addWindowListener(listener);
+
+		setUndecorated(true);
 		profile.add(destName, BorderLayout.WEST);
+		profile.add(new BorderPanel(this), BorderLayout.NORTH);
 		// profile.add(,BorderLayout.EAST)
 
 		setLayout(new BorderLayout());
-		add(profile, BorderLayout.NORTH);
-		add(chatPanel, BorderLayout.CENTER);
+		allOfComponents.add(profile, BorderLayout.NORTH);
+		allOfComponents.add(chatPanel, BorderLayout.CENTER);
 
+		setLocationRelativeTo(null);
+
+		add(allOfComponents, BorderLayout.CENTER);
 		setVisible(true);
 		setSize(500, 500);
 	}
 
 	private class ChatPanel extends JPanel {
 
-		private JTextArea messagePane;
+		private JPanel messagePane;
 		private JTextField message;
 		private JButton send;
 		private JPanel sendArea;
@@ -79,14 +81,24 @@ public class ChatRoom extends JFrame {
 		public ChatPanel() {
 
 			message = new JTextField();
-			messagePane = new JTextArea();
+			messagePane = new JPanel();
+			messagePane.setLayout(new GridBagLayout());
 			send = new JButton("Send");
 			sendArea = new JPanel();
 			JScrollPane js = new JScrollPane(messagePane);
 
 			Styling.makeStyledButton(send);
 
+			setBackground(Color.WHITE);
 			setLayout(new BorderLayout());
+			gc = new GridBagConstraints();
+			gc.weightx = 1;
+			gc.weighty = 1;
+			gc.gridy = GridBagConstraints.RELATIVE;
+			gc.gridx = 0;
+			gc.anchor = GridBagConstraints.LINE_START;
+			gc.ipady = 15;
+			gc.insets = new Insets(10, 10, 10, 10);
 
 			init();
 
@@ -101,9 +113,12 @@ public class ChatRoom extends JFrame {
 
 							String payam = ChatRoom.this.dest.getFirstName()
 									+ ": " + message.getMessage();
-							messagePane.append("\n" + payam);
+							gc.ipadx = 100;
+							messagePane
+									.add(new MessageBubble(payam, false), gc);
 							messageCenter.getMessages().remove(i);
 							writeMessage(payam);
+							messagePane.revalidate();
 
 						}
 
@@ -142,9 +157,11 @@ public class ChatRoom extends JFrame {
 					}
 					String payam = ChatRoom.this.client.getUser()
 							.getFirstName() + ": " + message.getText();
-					messagePane.append("\n" + payam);
+					gc.ipadx = 100;
+					messagePane.add(new MessageBubble(payam, true), gc);
 					writeMessage(payam);
 					message.setText("");
+					messagePane.revalidate();
 
 				}
 			});
@@ -169,6 +186,7 @@ public class ChatRoom extends JFrame {
 		}
 
 		public void init() {
+
 			messageCenter.sendMessage(new Message(Message.INITHISTORY,
 					Message.CLIENT, Message.SERVER, "data/UserData/"
 							+ client.getUser().getUsername() + "/"
@@ -177,20 +195,24 @@ public class ChatRoom extends JFrame {
 			String[] tokens = message.getMessage().split("\\+");
 			System.out.println(tokens.length);
 			for (String string : tokens) {
-				messagePane.append(string + "\n");
+				gc.ipadx = 100;
+				if (string.length() > 0) {
+					boolean good = string.indexOf(dest.getFirstName()) > -1;
+					messagePane.add(new MessageBubble(string, !good), gc);
+					messagePane.revalidate();
+				}
 			}
 		}
 
 		public void refreshStatus() {
-			System.out.println(dest.getUsername());
 			messageCenter.sendMessage(new Message(Message.STATUS,
 					Message.CLIENT, Message.SERVER, dest.getUsername()));
 			Message msg = messageCenter.getMessage(Message.STATUS);
 			if (msg.getMessage().equals("true")) {
-				JOptionPane.showMessageDialog(null, "Is online.");
+
 				destIsOnline = true;
 			} else {
-				JOptionPane.showMessageDialog(null, "Is offline");
+
 				destIsOnline = false;
 			}
 		}

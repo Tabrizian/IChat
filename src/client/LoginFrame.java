@@ -42,6 +42,7 @@ public class LoginFrame extends JFrame {
 		add(panel, BorderLayout.CENTER);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setVisible(true);
+		setLocationRelativeTo(null);
 		setSize(300, 300);
 		setLocation(200, 200);
 	}
@@ -77,13 +78,7 @@ public class LoginFrame extends JFrame {
 			password.addFocusListener(focus2);
 			password.addKeyListener(focus2);
 			username.setSize((int) username.getPreferredSize().getWidth(), 40);
-
-			ComponentResizer cr = new ComponentResizer();
-			cr.setMinimumSize(new Dimension(300, 300));
-			cr.setMaximumSize(new Dimension(800, 600));
-			cr.registerComponent(this);
-			cr.setSnapSize(new Dimension(10, 10));
-
+			
 			ichat = new JLabel("iChat!");
 			ichat.setFont(Styling.ichatFont);
 			ichat.setForeground(Styling.blue);
