@@ -6,6 +6,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 import com.User;
 
 public class Client implements Serializable {
@@ -15,24 +17,26 @@ public class Client implements Serializable {
 	private User user = null;
 
 	private Client() {
-		try {
-			socket = (new Socket(InetAddress.getByName(server), 1373));
-			socket.getOutputStream();
-			socket.getInputStream();
-			new Thread(MessageCenter.getMessageCenter(socket)).start();;
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		boolean run = false;
+		int yes = 0;
+		while (!run && yes == 0) {
+			try {
+				socket = (new Socket(InetAddress.getByName(server), 1373));
+				socket.getOutputStream();
+				socket.getInputStream();
+				new Thread(MessageCenter.getMessageCenter(socket)).start();
+				new LoginFrame(this);
+				run = true;
+			} catch (Exception e) {
+				yes = JOptionPane.showConfirmDialog(null, "Server is not started! Do you want to try again?",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				System.out.println(yes);
+			}
 		}
-		new LoginFrame(this);
 	}
 
 	public static void main(String[] args) {
 		new Client();
-		
 
 	}
 

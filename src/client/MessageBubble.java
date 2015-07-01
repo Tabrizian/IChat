@@ -6,13 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 public class MessageBubble extends JLabel {
 
-	private Color color;
 	private boolean isTurn;
 
 	public MessageBubble(String text, boolean isTurn) {

@@ -41,7 +41,10 @@ public class Handler implements Runnable {
 					break;
 				}
 				case Message.DELIVERED: {
-
+					User usr = UsersDatabase.getUsersDataBase().getUser(
+							message.getDest_ID());
+					message.send(ClientsDatabase.getClientsDatabase()
+							.getHandler(usr).getSocket());
 					break;
 				}
 				case Message.LOGIN: {

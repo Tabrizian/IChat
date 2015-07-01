@@ -164,43 +164,6 @@ public class SignupFrame extends JFrame implements KeyListener{
 					}
 				}
 			});
-
-			username.addKeyListener(new KeyListener() {
-
-				@Override
-				public void keyTyped(KeyEvent e) {
-					messageCenter.sendMessage(new Message(Message.AUTH,
-							Message.CLIENT, Message.SERVER, username.getText()));
-					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
-						check.setText("Check!");
-					} else {
-						check.setText("X");
-					}
-				}
-
-				@Override
-				public void keyReleased(KeyEvent e) {
-					messageCenter.sendMessage(new Message(Message.AUTH,
-							Message.CLIENT, Message.SERVER, username.getText()));
-					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
-						check.setText("Check!");
-					} else {
-						check.setText("X");
-					}
-				}
-
-				@Override
-				public void keyPressed(KeyEvent e) {
-					messageCenter.sendMessage(new Message(Message.AUTH,
-							Message.CLIENT, Message.SERVER, username.getText()));
-					if (messageCenter.getMessage(Message.AUTH).equals("true")) {
-						check.setText("Check!");
-					} else {
-						check.setText("X");
-					}
-				}
-			});
-
 		}
 		
 		public JButton getSignup(){

@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import com.Message;
 import com.User;
 
-public class ChatRoom extends JFrame implements KeyListener{
+public class ChatRoom extends JFrame implements KeyListener {
 
 	private Client client;
 	private User dest;
@@ -89,14 +89,16 @@ public class ChatRoom extends JFrame implements KeyListener{
 			send = new JButton("Send");
 			sendArea = new JPanel();
 			JScrollPane js = new JScrollPane(messagePane);
-			
-			//Makes Jscroll pane scroll to the bottom.
-			js.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
-		        public void adjustmentValueChanged(AdjustmentEvent e) {  
-		            e.getAdjustable().setValue(e.getAdjustable().getMaximum());  
-		        }
-		    });
-			
+
+			// Makes Jscroll pane scroll to the bottom.
+			js.getVerticalScrollBar().addAdjustmentListener(
+					new AdjustmentListener() {
+						public void adjustmentValueChanged(AdjustmentEvent e) {
+							e.getAdjustable().setValue(
+									e.getAdjustable().getMaximum());
+						}
+					});
+
 			Styling.makeStyledButton(send);
 
 			setBackground(Color.WHITE);
@@ -121,7 +123,6 @@ public class ChatRoom extends JFrame implements KeyListener{
 					for (int i = 0; i < messageCenter.getMessages().size(); i++) {
 						Message message = messageCenter.getMessages().get(i);
 						if (message.getVerb().equals(Message.SEND)) {
-
 							String payam = ChatRoom.this.dest.getFirstName()
 									+ ": " + message.getMessage();
 							gc.ipadx = 100;
@@ -131,6 +132,11 @@ public class ChatRoom extends JFrame implements KeyListener{
 							writeMessage(payam);
 							messagePane.revalidate();
 
+						} else if (message.getVerb().equals(Message.DELIVERED)) {
+							gc.ipadx = 100;
+							messagePane.add(new MessageBubble("Delivered",
+									false), gc);
+							messageCenter.getMessages().remove(i);
 						}
 
 					}
@@ -178,8 +184,8 @@ public class ChatRoom extends JFrame implements KeyListener{
 			});
 
 		}
-		
-		public JButton getSend(){
+
+		public JButton getSend() {
 			return send;
 		}
 
@@ -236,18 +242,18 @@ public class ChatRoom extends JFrame implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		if(e.getKeyChar() == '\n')
+		if (e.getKeyChar() == '\n')
 			chatPanel.getSend().doClick();
 	}
 
